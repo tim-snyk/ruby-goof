@@ -14,13 +14,24 @@ jobs:
         ruby-version: 2.6.x
     - name: Build and test with Rake
       run: |
-        gem install bundler
         gem install bundler:1.17.2
         bundle install
       
     - uses: actions/checkout@master
     - name: Run Snyk to check for vulnerabilities
-      uses: snyk/actions/ruby@master
+      uses: snyk/actions@0.3.0
+      with: 
+       command: test
       continue-on-error: true # To make sure that SARIF upload gets called
       env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+          
+    - uses: actions/checkout@master
+    - name: Run Snyk to check for vulnerabilities
+      uses: snyk/actions@0.3.0
+      with: 
+       command: code test
+      continue-on-error: true # To make sure that SARIF upload gets called
+      env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+ 
