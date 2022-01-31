@@ -1,0 +1,25 @@
+name: Snyk Security CI/CD
+
+on: push
+
+jobs:
+  security:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up Ruby 2.7.1
+      uses: actions/setup-ruby@v1
+      with:
+        ruby-version: 2.7.x
+    - name: Build and test with Rake
+      run: |
+        gem install bundler
+        bundle install --jobs 4 --retry 3
+      
+    - uses: actions/checkout@master
+    - name: Run Snyk to check for vulnerabilities
+      uses: snyk/actions/ruby@master
+      continue-on-error: true # To make sure that SARIF upload gets called
+      env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
